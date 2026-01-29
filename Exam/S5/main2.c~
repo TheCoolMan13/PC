@@ -1,0 +1,22 @@
+#include <stdio.h>
+// Ex 14
+
+int task_a()
+{
+
+}
+
+int task_b()
+{
+
+}
+
+
+int main()
+{
+  uint16_t input;
+  scanf("&hhu" , input);
+
+
+  return 0;
+}
