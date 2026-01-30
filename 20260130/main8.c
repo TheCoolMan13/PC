@@ -95,6 +95,7 @@ int main(int argv, char **argc)
         char *decoded = human2pasa(cuvant);
         if (fwrite(decoded, sizeof(char), strlen(decoded), output) != strlen(decoded))
         {
+            free(decoded);
             perror(NULL);
             exit(-1);
         }
