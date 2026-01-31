@@ -17,18 +17,21 @@ int main()
     if(( output = fopen(outputname , "w")) == NULL)
     {
         perror(NULL);
+        fclose(input);
         exit(1);
     }
 
-    uint16_t BUFFER[BUFFER_SIZE];
-    uint16_t Read_Numbers;
-    while((Read_Numbers = fread(BUFFER, sizeof(Read_Numbers) , BUFFER_SIZE, input) )>0)
+    uint32_t BUFFER[BUFFER_SIZE];
+    uint32_t Read_Numbers;
+    while((Read_Numbers = fread(BUFFER, sizeof(uint32_t) , BUFFER_SIZE, input) )>0)
     {
         for(int i = 0 ; i<Read_Numbers; i++)
         {
-            if(fprintf(output , "%08X\n" , *(BUFFER+i)) != 9)
+            if(fprintf(output , "%08X\n" , *(BUFFER+i)) < 0)
             {
                 perror(NULL);
+                fclose(input);
+                fclose(output);
                 exit(1);
             }
         }
