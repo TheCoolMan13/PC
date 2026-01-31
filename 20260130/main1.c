@@ -95,24 +95,61 @@ uint32_t ExtractBudget(const char *input)
     }
     else
     {
-        budget_end = '\0';
+        *budget_end = '\0';
     }
+
     return atol(budget);
+}
+
+int compare1(const void *a, const void *b)
+{
+    Movie *m1 = (Movie *)a;
+    Movie *m2 = (Movie *)b;
+    return m1->year - m2->year;
+}
+
+int compare2(const void *a, const void *b)
+{
+    Movie *m1 = (Movie *)a;
+    Movie *m2 = (Movie *)b;
+    return strcmp(m1->title, m2->title);
+}
+
+int compare3(const void *a, const void *b)
+{
+    Movie *m1 = (Movie *)a;
+    Movie *m2 = (Movie *)b;
+    return m1->budget - m2->budget;
 }
 
 int main()
 {
     FILE *input;
-    FILE *output;
+    FILE *output1;
+    FILE *output2;
+    FILE *output3;
 
     const char *inputfilename = "movies.csv";
-    const char *outputfilename = "moviesOUT1.txt";
+    const char *outputfilename1 = "moviesOUT1.txt";
+    const char *outputfilename2 = "moviesOUT2.txt";
+    const char *outputfilename3 = "moviesOUT3.txt";
+
     if ((input = fopen(inputfilename, "r")) == NULL)
     {
         fprintf(stderr, "Eroare deschidere input");
         exit(1);
     }
-    if ((output = fopen(outputfilename, "w")) == NULL)
+    if ((output1 = fopen(outputfilename1, "w")) == NULL)
+    {
+        fprintf(stderr, "Eroare descidere output");
+        exit(1);
+    }
+    if ((output2 = fopen(outputfilename2, "w")) == NULL)
+    {
+        fprintf(stderr, "Eroare descidere output");
+        exit(1);
+    }
+    if ((output3 = fopen(outputfilename3, "w")) == NULL)
     {
         fprintf(stderr, "Eroare descidere output");
         exit(1);
@@ -126,40 +163,74 @@ int main()
         exit(1);
     }
 
-    Movie *ListaFilme = malloc(MOVIE_CHUNK);
+    Movie *ListaFilme = malloc(MOVIE_CHUNK * sizeof(Movie));
     uint32_t MovieINDEX = 0;
-    uint32_t MovieINDEX_LIMIT = MOVIE_CHUNK while ((fgets(FILM, 1024, input)) != NULL)
+    uint32_t MovieINDEX_LIMIT = MOVIE_CHUNK;
+    while ((fgets(FILM, 1024, input)) != NULL)
     {
-        if (MovieINDEX + 1 > MovieINDEX_LIMIT)
+        if (MovieINDEX + 13 > MovieINDEX_LIMIT)
         {
-            /*
-
-                AICI TREBE SA REALOCI SI DUPA SA VEZI CUM
-                FACI RESTU TAK URILOR
-
-            */
+            ListaFilme = realloc(ListaFilme, (MovieINDEX + MOVIE_CHUNK) * sizeof(Movie));
+            MovieINDEX_LIMIT = MovieINDEX + MOVIE_CHUNK;
         }
         uint16_t YEAR = atoi(FILM);
         uint32_t BUDGET = ExtractBudget(FILM);
         char *TITLE = ExtractTitle(FILM);
 
-        ListaFilme[MovieINDEX]->year = YEAR;
-        ListaFilme[MovieINDEX]->title = TITLE;
-        ListaFilme[MovieINDEX]->budget = BUDGET;
-        MovieINDEX++;
+        // NU LUAM IN CONSIDERARE FILMELE CARE AU O ',' IN TILTUL LOR
+        if (BUDGET != 0)
+        {
+            ListaFilme[MovieINDEX].year = YEAR;
+            ListaFilme[MovieINDEX].title = strdup(TITLE);
+            ListaFilme[MovieINDEX].budget = BUDGET;
 
-        printf("%hu %s %u\n", YEAR, TITLE, BUDGET);
+            printf("%hu %s %u\n", ListaFilme[MovieINDEX].year, ListaFilme[MovieINDEX].title, ListaFilme[MovieINDEX].budget);
+            MovieINDEX++;
+        }
     }
+    MovieINDEX--;
 
     if (fclose(input) != 0)
     {
         perror(NULL);
         exit(-1);
     }
-    if (fclose(output) != 0)
+
+    // TASK PT OUT1  toate filmele sortate după anul apariției,
+    qsort(ListaFilme, MovieINDEX, sizeof(Movie), compare1);
+    for (int i = 0; i < MovieINDEX; i++)
+    {
+        fprintf(output1, "%hu, %u , %s \n", ListaFilme[i].year, ListaFilme[i].budget, ListaFilme[i].title);
+    }
+    if (fclose(output1) != 0)
     {
         perror(NULL);
         exit(-1);
     }
+
+    // TASK PT OUT2  toate filmele sortate după anul apariției,
+    qsort(ListaFilme, MovieINDEX, sizeof(Movie), compare2);
+    for (int i = 0; i < MovieINDEX; i++)
+    {
+        fprintf(output2, "%hu, %u , %s \n", ListaFilme[i].year, ListaFilme[i].budget, ListaFilme[i].title);
+    }
+    if (fclose(output2) != 0)
+    {
+        perror(NULL);
+        exit(-1);
+    }
+
+    // TASK PT OUT3  toate filmele sortate buget
+    qsort(ListaFilme, MovieINDEX, sizeof(Movie), compare3);
+    for (int i = 0; i < MovieINDEX; i++)
+    {
+        fprintf(output3, "%hu, %u , %s \n", ListaFilme[i].year, ListaFilme[i].budget, ListaFilme[i].title);
+    }
+    if (fclose(output3) != 0)
+    {
+        perror(NULL);
+        exit(-1);
+    }
+
     return 0;
 }
