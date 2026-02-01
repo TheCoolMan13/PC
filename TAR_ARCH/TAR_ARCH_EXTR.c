@@ -146,6 +146,11 @@ int main(int argc, char **argv)
     {
         if (strcmp(argv[1], "c") == 0 || strcmp(argv[1], "C") == 0)
         {
+            if (argc < 3)
+            {
+                fprintf(stderr, "Lipsesc fisierele!\n");
+                return 1;
+            }
             printf("OPTION 2 : CREARE ARHIVA\n");
             FILE *output_archive = NULL;
 
