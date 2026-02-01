@@ -1,0 +1,45 @@
+Problemă de antrenament puțin mai dificilă
+Cerințe pentru finalizare
+Scrieți o variantă simplificată a programului de arhivare/dezarvhivare tar. Programul tar este inclusv în orice distribuție de Linux și are ca rol realizare de arhivare și dezarhivare de fișiere conform formatului tar fără a exista vreo compresie. Implementarea trebuie să aibă următoarele funcționalități:
+
+puteți scrie un singur program capabil de ambele operațiuni, arhivare și dezarhivare de fișiere. În acest caz separarea funcționalităților se va realiza prin argumente dedicate în linie de comanda (ex: arg 'a' pentru arhivare și 'x' pentru dezarhivare - extragere). Pe de altă parte puteți scrie și două programe distrincte: un program pentru arhivare și un program pentru dezarhivare.
+arhivarea și dezarhivarea se va limita la fișiere din directorul curent
+pentru procesul de arhivare, fișierele din directorul curent ce urmează a fi arhivate se vor da prin numele lor ca și argument în linie de comandă după un alt argument în linie de comandă ce va specifica numele arhivei tar
+pentru procesul de dezarvhivare, fișierele vor fi create cu numele găsit în arhivă iar programul vostru va prelua numele arhivei ca și argument în linie de comandă.
+toate operațiunile de lucru cu fișiere vor fi implementate cu fread și fwrite
+implementarea trebuie să fie compatibilă cu programul original GNU tar în sensul că o arhivă creată cu programul original tar trebuie să fie dezarhivată de implementarea proprie iar orice arhivă realizată de implementarea proprie să poată fi extrasă de programul original tar
+Forma generală a unei arhive tar este următoarea:
+
+file_1_header - file_1_content - file_2_header - file_2_content
+Fiecare header are o lungime de exact 512 bytes și are un format dedicat. Header-ul descrie și conține informații despre fișierul a cărui conținut urmează în arhivă. După fiecare header în arhivă urmează efectiv conținutul fișierului descris de header. Conținutul fișierului conține la sfârșit un padding de bytes de valoare 0x00 pentru a obține un bloc de 512 bytes. Exemplu: dacă fișierul arhivat are 3 bytes atunci în arhivă se copiază acei 3 bytes utili după care se adaugă un rest de bytes de valoare 0 de lungime (512-3) astfel ca totul să fie rotunjit la blocuri de 512 bytes. Practic, o arhiva tar este structurată în blocuri de 512 bytes: header-ul pentru fiecare fișier are 512 bytes iar fișierul este copiat și se adaugă la sfârșit un număr de bytes de 0 astfel ca ultimul bloc să aiba 512 bytes lungime. Evident, reiese faptul ca un fisier tar are o dimensiune multiplu de 512.
+
+Structura unui header tar va putea fi găsită în resursele adiționale. Cele mai importante câmpuri din header sunt numele fișierului care conține efectiv numele fișierului a cărui conținut urmează după header și dimensiunea fișierului (dimensiunea efectivă a fișierului - fără padding de 0 pentru rotunjire la 512). Un alt câmp important este câmpul de checksum care trebuie calculat conform documentației adiționale ce descrie header-ul. Pentru simplitate, celalalte câmpuri pot fi hard-codate identic pentru toate fișierele din arhivă cu menținea să respecte structura. Atentie: unele câmpuri sunt în format ASCII octal !!!!!
+
+Ar fi util ca programul dacă este invocat fără argumente să printeze informații despre utilizare (usage)
+
+Exemplu de apel al programului ce implementează ambele funcționalități. Urmatoarea linie va invoca programul ce arhivează fișierele file1, file2, file3 în arhiva output_file_tar.tar
+
+./mytar c tar_output_file.tar file1 file2 file3 ....
+
+Exemplu de apel al programului pentru extragerea fișierelor din arhivă
+
+
+./mytar x tar_archive.tar
+Resurse adiționale:
+
+http://staff.cs.upt.ro/~marius/curs/pc2/lab9.html
+
+https://en.wikipedia.org/wiki/Tar_(computing)
+
+https://www.gnu.org/software/tar/manual/tar.html
+
+https://www.gnu.org/software/tar/manual/
+
+https://www.gnu.org/software/tar/manual/html_node/Standard.html
+
+Pentru a crea o arhivă tar folosind utilitarul tar din GNU Linux se poate folosi următorul exemplu care arhivează toate fișierele din directorul curent în arhiva my_tar_archive.tar
+
+tar cvvf my_tar_archive.tar *
+Pentru a extrage fișierele dintr- arhivă tar folosind utilitarul tar din GNU Linux se poate folosi următoarea comandă:
+
+tar xvvf my_tar_archive.tar
