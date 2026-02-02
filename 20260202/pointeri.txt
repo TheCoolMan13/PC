@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int main()
+{
+    /*
+    Cand folosesti pointeri??
+
+   int v[200] -- are fix 200 de locuri de la 0 la 199
+   int *v = malloc(200 * sizeof(int)); -- are fix 200 de locuri dar mereu pot sa mai adaug
+   v = realloc(v , NewSize * sizeof(int)); -- are fix NewSize de locuri acum
+   *v == v[]
+   v[2] == *(v + 2); < adresa lui (v+2)
+   ^
+   (adresa lui v )+ 2 * sizeof(element in v)
+
+    */
+
+    return 0;
+}
